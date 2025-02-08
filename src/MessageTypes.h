@@ -1,0 +1,19 @@
+#pragma once
+
+enum class MessageTypes : int
+{
+    CREATE_REQUEST,
+    CREATE_RESULT,
+    CREATE_FAIL,
+    EXEC_REQUEST,
+    EXEC_RESULT,
+    EXEC_FAIL,
+    HEARTBIT_REQUEST,
+    HEARTBIT_RESULT,
+    HEARTBIT_FAIL,
+    RELATE_RESULT,
+    RELATE_REQUEST,
+    QUIT,
+    EMPTY,
+    TEST,
+};
