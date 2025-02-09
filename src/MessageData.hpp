@@ -1,11 +1,10 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
-class MessageData
-{
-public:
+class MessageData {
+  public:
     int id;
     int len1;
     int len2;

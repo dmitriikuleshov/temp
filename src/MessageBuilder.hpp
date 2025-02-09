@@ -1,43 +1,40 @@
 #pragma once
 
+#include "Message.hpp"
+#include "MessageData.hpp"
 #include <iostream>
-#include "Message.h"
-#include "MessageData.h"
 
-class MessageBuilder
-{
-public:
-    static Message buildCreateMessage(int Id)
-    {
+class MessageBuilder {
+  public:
+    static Message buildCreateMessage(int Id) {
         int data[2];
         std::cin >> data[0] >> data[1];
-        std::cout << "add new node " << data[0] << " to parent " << data[1] << std::endl;
-        return {MessageTypes::CREATE_REQUEST, Id, Id, sizeof(data), (void *)&data};
+        std::cout << "add new node " << data[0] << " to parent " << data[1]
+                  << std::endl;
+        return {MessageTypes::CREATE_REQUEST, Id, Id, sizeof(data),
+                (void *)&data};
     }
 
-    static Message buildPingRequest(int time, int id)
-    {
-        return {MessageTypes::HEARTBIT_REQUEST, id, -1, sizeof(int), (void *)&time};
+    static Message buildPingRequest(int time, int id) {
+        return {MessageTypes::HEARTBIT_REQUEST, id, -1, sizeof(int),
+                (void *)&time};
     }
 
-    static Message buildPingMessage(unsigned long long time, int Id)
-    {
-        return {MessageTypes::HEARTBIT_RESULT, Id, -1, sizeof(unsigned long long), (void *)&time};
+    static Message buildPingMessage(unsigned long long time, int Id) {
+        return {MessageTypes::HEARTBIT_RESULT, Id, -1,
+                sizeof(unsigned long long), (void *)&time};
     }
 
-    static Message buildTestMessage()
-    {
+    static Message buildTestMessage() {
         const char *testMessage = "first";
         return {MessageTypes::TEST, -1, -1, testMessage};
     }
 
-    static Message buildExitMessage(int Id)
-    {
+    static Message buildExitMessage(int Id) {
         return {MessageTypes::QUIT, Id, Id};
     }
 
-    static Message buildExecMessage()
-    {
+    static Message buildExecMessage() {
         int id;
         std::cin >> id;
         std::vector<std::string> data(2);
@@ -47,18 +44,15 @@ public:
         return {MessageTypes::EXEC_REQUEST, -1, id, getSize(data), body};
     }
 
-    static int getSize(std::vector<std::string> &vector)
-    {
+    static int getSize(std::vector<std::string> &vector) {
         int size = 3 * sizeof(int);
-        for (auto x : vector)
-        {
+        for (auto x : vector) {
             size += x.size() * sizeof(char);
         }
         return size;
     }
 
-    static void *serialize(int &id, std::vector<std::string> &data)
-    {
+    static void *serialize(int &id, std::vector<std::string> &data) {
         void *body = malloc(getSize(data));
         memcpy(body, &id, sizeof(int));
         int size1 = data[0].size();
@@ -74,8 +68,7 @@ public:
         return body;
     }
 
-    static MessageData deserialize(void *messageBody)
-    {
+    static MessageData deserialize(void *messageBody) {
         MessageData data;
         data.id = *(int *)((char *)(messageBody));
         int offset = sizeof(int);
@@ -88,7 +81,8 @@ public:
         offset += sizeof(int);
         void *str2 = malloc(size2);
         memcpy(str2, ((char *)messageBody + offset), size2 * sizeof(char));
-        // std::cout << data.id << " " << size1 << " "  << (char*)str1 << " " << size2 << " " << (char*)str2 << "\n";
+        // std::cout << data.id << " " << size1 << " "  << (char*)str1 << " " <<
+        // size2 << " " << (char*)str2 << "\n";
         data.len1 = size1;
         data.len2 = size2;
         data.data.emplace_back((char *)str1);

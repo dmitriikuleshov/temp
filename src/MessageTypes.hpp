@@ -1,7 +1,6 @@
 #pragma once
 
-enum class MessageTypes : int
-{
+enum class MessageTypes : int {
     CREATE_REQUEST,
     CREATE_RESULT,
     CREATE_FAIL,

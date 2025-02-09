@@ -4,11 +4,11 @@
 #include <mutex>
 #include <set>
 
-#include "AbstractNode.h"
-#include "Message.h"
-#include "MessageBuilder.h"
-#include "ServerNode.h"
-#include "ZmqUtils.h"
+#include "AbstractNode.hpp"
+#include "Message.hpp"
+#include "MessageBuilder.hpp"
+#include "ServerNode.hpp"
+#include "ZmqUtils.hpp"
 
 class SpringBootApplication : public AbstractNode {
   public:

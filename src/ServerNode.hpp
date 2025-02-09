@@ -1,10 +1,10 @@
 #pragma once
 
-#include "AbstractNode.h"
-#include "Message.h"
-#include "MessageBuilder.h"
-#include "MessageData.h"
-#include "SpringBootApplication.h"
+#include "AbstractNode.hpp"
+#include "Message.hpp"
+#include "MessageBuilder.hpp"
+#include "MessageData.hpp"
+#include "SpringBootApplication.hpp"
 #include <chrono>
 
 class ServerNode : public AbstractNode {

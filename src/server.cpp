@@ -1,5 +1,5 @@
-#include "ServerNode.h"
-#include "SpringBootApplication.h"
+#include "ServerNode.hpp"
+#include "SpringBootApplication.hpp"
 #include "sys/wait.h"
 #include <iostream>
 #include <signal.h>

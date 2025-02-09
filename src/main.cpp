@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "ServerNode.h"
+#include "ServerNode.hpp"
+#include "SpringBootApplication.hpp"
 #include <sys/wait.h>
-#include "SpringBootApplication.h"
 
 void child(int sig) {
     pid_t pid;
