@@ -3,13 +3,18 @@ project(lab6)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(cppzmq)
+find_package(cppzmq REQUIRED)
 
-add_executable(lab6 main.cpp AbstractNode.h ChildNodeInfo.h ZmqUtils.h Message.h MessageTypes.h MessageBuilder.h MessageData.h SpringBootApplication.h)
-target_link_libraries(lab6 cppzmq)
-target_link_libraries(lab6 pthread)
+# Основные исполняемые файлы
+add_executable(lab6 main.cpp AbstractNode.hpp ChildNodeInfo.hpp ZmqUtils.hpp Message.hpp MessageTypes.hpp MessageBuilder.hpp MessageData.hpp SpringBootApplication.hpp)
+target_link_libraries(lab6 cppzmq pthread)
 
-add_executable(server AbstractNode.h ChildNodeInfo.h ZmqUtils.h Message.h MessageTypes.h MessageBuilder.h MessageData.h SpringBootApplication.h server.cpp)
+add_executable(server server.cpp AbstractNode.hpp ChildNodeInfo.hpp ZmqUtils.hpp Message.hpp MessageTypes.hpp MessageBuilder.hpp MessageData.hpp SpringBootApplication.hpp)
+target_link_libraries(server cppzmq pthread)
 
-target_link_libraries(server cppzmq)
-target_link_libraries(server pthread)
+# Добавляем тесты
+add_executable(tests tests.cpp AbstractNode.hpp ChildNodeInfo.hpp ZmqUtils.hpp Message.hpp MessageTypes.hpp MessageBuilder.hpp MessageData.hpp SpringBootApplication.hpp)
+target_link_libraries(tests cppzmq pthread gtest gtest_main)
+
+# Добавляем тесты в CTest
+add_test(NAME Lab6Tests COMMAND tests)
