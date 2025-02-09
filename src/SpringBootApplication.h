@@ -134,8 +134,10 @@ class SpringBootApplication : public AbstractNode {
                                   << " and its children are unresponsive!"
                                   << std::endl;
                     } else {
-                        std::cout << "Node " << server.first
-                                  << " responded to heartbeat." << std::endl;
+                        // HEARTBEAT OK
+
+                        // std::cout << "Node " << server.first
+                        //          << " responded to heartbeat." << std::endl;
                     }
                 } catch (const zmq::error_t &error) {
                     std::cerr << "Error sending heartbeat to node "
@@ -247,7 +249,7 @@ class SpringBootApplication : public AbstractNode {
         }
         if (pId == Id) {
             pid_t pid = addChild(id, Port);
-            std::cout << "received Pid: " << pid << std::endl;
+            std::cout << "received PID: " << pid << std::endl;
             serversId.insert(id);
             std::unique_lock<std::mutex> lock(creationLock);
             created = false;

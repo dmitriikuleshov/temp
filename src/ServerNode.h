@@ -98,8 +98,10 @@ class ServerNode : public AbstractNode {
                                   << " and its children are unresponsive!"
                                   << std::endl;
                     } else {
-                        std::cout << "Node " << server.first
-                                  << " responded to heartbeat." << std::endl;
+                        // HEARTBEAT OK
+
+                        // std::cout << "Node " << server.first
+                        //          << " responded to heartbeat." << std::endl;
                     }
                 } catch (const zmq::error_t &error) {
                     std::cerr << "Error sending heartbeat to node "
@@ -139,7 +141,7 @@ class ServerNode : public AbstractNode {
 
     void registrator() {
         Message messageIn;
-        std::cout << "from registrator " << getpid() << std::endl;
+        std::cout << "from registrator: " << getpid() << std::endl;
         Message messageOut;
         while (true) {
             messageIn.receiveMessage(registerSocket);
@@ -200,10 +202,10 @@ class ServerNode : public AbstractNode {
         int receiverPort = *(int *)(messageBody + sizeof(pid_t));
         int registerPort = *(int *)(messageBody + sizeof(pid_t) + sizeof(int));
 
-        std::cout << "Registering node: PID=" << pid
-                  << ", ReceiverPort=" << receiverPort
-                  << ", RegisterPort=" << registerPort
-                  << ", SenderID=" << message.senderId << std::endl;
+        // std::cout << "Registering node: PID=" << pid
+        //          << ", ReceiverPort=" << receiverPort
+        //          << ", RegisterPort=" << registerPort
+        //          << ", SenderID=" << message.senderId << std::endl;
 
         outerNodes.emplace(message.senderId,
                            ChildNodeInfo(pid, receiverPort, registerPort));
@@ -216,8 +218,8 @@ class ServerNode : public AbstractNode {
         int parId = ((int *)message.body)[1];
         int sndId = message.senderId;
 
-        std::cout << "Create request: ID=" << id << ", ParentID=" << parId
-                  << ", SenderID=" << sndId << std::endl;
+        // std::cout << "Create request: ID=" << id << ", ParentID=" << parId
+        //          << ", SenderID=" << sndId << std::endl;
 
         if (parId == Id) {
             pid_t pid = addChild(id, registerPort);
@@ -228,8 +230,9 @@ class ServerNode : public AbstractNode {
                 creationalCondition.wait(lock);
             }
 
-            std::cout << "Created child node " << id << " with PID=" << pid
-                      << std::endl;
+            //    std::cout << "Created child node " << id << " with PID=" <<
+            //    pid
+            //              << std::endl;
             return {MessageTypes::CREATE_RESULT, Id, parentId, sizeof(pid),
                     &pid};
         }
@@ -305,7 +308,7 @@ class ServerNode : public AbstractNode {
             newData[1] = "";
             void *newBody = MessageBuilder::serialize(data.id, newData);
             int newSize = MessageBuilder::getSize(newData);
-            std::cout << "RECEVIEd!! " << text << " " << pattern << std::endl;
+            std::cout << "RECEVIED! " << text << " " << pattern << std::endl;
             return {MessageTypes::EXEC_RESULT, Id, parentId, newSize, newBody};
         }
         for (auto server : this->outerNodes) {
