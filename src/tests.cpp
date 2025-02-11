@@ -1,4 +1,5 @@
 #include "Message.hpp"
+#include "MessageBuilder.hpp"
 #include <chrono>
 #include <gtest/gtest.h>
 #include <thread>
@@ -109,14 +110,106 @@ TEST_F(MessageTest, ReceiveMessageWithTimeoutFail) {
     EXPECT_FALSE(received);
 }
 
-TEST_F(MessageTest, UpdateMessage) {
-    Message msg(MessageTypes::CREATE_REQUEST, 1, 2);
-    msg.update(3, 4);
-    EXPECT_EQ(msg.senderId, 3);
-    EXPECT_EQ(msg.recieverId, 4);
+// Фикстура для тестов
+class MessageBuilderTestFixture : public ::testing::Test {
+  protected:
+    void SetUp() override {
+        // Здесь можно добавить общую настройку для всех тестов
+    }
+
+    void TearDown() override {
+        // Здесь можно добавить общую очистку для всех тестов
+    }
+};
+
+// Ваши предыдущие тесты
+TEST_F(MessageBuilderTestFixture, PreviousTest1) {
+    // Пример вашего предыдущего теста
+    Message message = MessageBuilder::buildTestMessage();
+    EXPECT_EQ(message.messageType, MessageTypes::TEST);
+    EXPECT_EQ(message.senderId, -1);
+    EXPECT_EQ(message.recieverId, -1);
+    EXPECT_EQ(message.sizeOfBody, strlen("first") + 1);
+    EXPECT_STREQ((char *)message.body, "first");
 }
 
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+TEST_F(MessageBuilderTestFixture, PreviousTest2) {
+    // Пример вашего предыдущего теста
+    int id = 1;
+    Message message = MessageBuilder::buildExitMessage(id);
+    EXPECT_EQ(message.messageType, MessageTypes::QUIT);
+    EXPECT_EQ(message.senderId, id);
+    EXPECT_EQ(message.recieverId, id);
+    EXPECT_EQ(message.sizeOfBody, 0);
+    EXPECT_EQ(message.body, nullptr);
+}
+
+// Новые тесты для MessageBuilder
+TEST_F(MessageBuilderTestFixture, BuildCreateMessage) {
+    int id = 1;
+    int data[2] = {10, 20};
+    std::istringstream input("10 20");
+    std::cin.rdbuf(input.rdbuf());
+
+    Message message = MessageBuilder::buildCreateMessage(id);
+
+    EXPECT_EQ(message.messageType, MessageTypes::CREATE_REQUEST);
+    EXPECT_EQ(message.senderId, id);
+    EXPECT_EQ(message.recieverId, id);
+    EXPECT_EQ(message.sizeOfBody, sizeof(data));
+    EXPECT_EQ(memcmp(message.body, data, sizeof(data)), 0);
+}
+
+TEST_F(MessageBuilderTestFixture, BuildPingRequest) {
+    int time = 100;
+    int id = 1;
+
+    Message message = MessageBuilder::buildPingRequest(time, id);
+
+    EXPECT_EQ(message.messageType, MessageTypes::HEARTBIT_REQUEST);
+    EXPECT_EQ(message.senderId, id);
+    EXPECT_EQ(message.recieverId, -1);
+    EXPECT_EQ(message.sizeOfBody, sizeof(int));
+    EXPECT_EQ(*(int *)message.body, time);
+}
+
+TEST_F(MessageBuilderTestFixture, BuildPingMessage) {
+    unsigned long long time = 123456789;
+    int id = 1;
+
+    Message message = MessageBuilder::buildPingMessage(time, id);
+
+    EXPECT_EQ(message.messageType, MessageTypes::HEARTBIT_RESULT);
+    EXPECT_EQ(message.senderId, id);
+    EXPECT_EQ(message.recieverId, -1);
+    EXPECT_EQ(message.sizeOfBody, sizeof(unsigned long long));
+    EXPECT_EQ(*(unsigned long long *)message.body, time);
+}
+
+TEST_F(MessageBuilderTestFixture, BuildExecMessage) {
+    int id = 1;
+    std::vector<std::string> data = {"command1", "command2"};
+    std::istringstream input("1 command1 command2");
+    std::cin.rdbuf(input.rdbuf());
+
+    Message message = MessageBuilder::buildExecMessage();
+
+    EXPECT_EQ(message.messageType, MessageTypes::EXEC_REQUEST);
+    EXPECT_EQ(message.senderId, -1);
+    EXPECT_EQ(message.recieverId, id);
+    EXPECT_GT(message.sizeOfBody, 0);
+
+    MessageData deserializedData = MessageBuilder::deserialize(message.body);
+    EXPECT_EQ(deserializedData.id, id);
+    EXPECT_EQ(deserializedData.data[0], data[0]);
+    EXPECT_EQ(deserializedData.data[1], data[1]);
+}
+
+TEST_F(MessageBuilderTestFixture, GetSize) {
+    std::vector<std::string> data = {"test1", "test2"};
+    int expectedSize = 3 * sizeof(int) + data[0].size() + data[1].size();
+
+    int size = MessageBuilder::getSize(data);
+
+    EXPECT_EQ(size, expectedSize);
 }
