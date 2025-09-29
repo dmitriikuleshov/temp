@@ -699,30 +699,24 @@ class SuffixTreeWithScoreChecking : public SuffixTree {
 
         // Start from the root node
         SuffixTreeNode *currentNode = this->root;
+        SuffixTreeEdge *currentEdge;
         size_t currentDepth = 0;
 
         while (currentDepth < textLength) {
-            // Get the current character from word A
+
             char currentChar = text[currentDepth];
 
-            // Check if current node has an edge starting with current character
-            auto edgeIt = currentNode->next.find(currentChar);
+            // Find edge starting with current character
+            currentEdge = currentNode->next.find(currentChar)->second;
 
-            // Found matching edge - traverse it
-            SuffixTreeEdge *currentEdge = edgeIt->second;
-
-            // Compare the edge's substring with the remaining part of word A
-            size_t edgeLength = currentEdge->getLength();
-            size_t compareLength = std::min(edgeLength, textLength - currentDepth);
-
-            // Update position in word A
-            currentDepth += compareLength;
+            // Update depth
+            currentDepth += currentEdge->getLength();
 
             // Move to the next node at the end of this edge
             currentNode = currentEdge->node;
 
-            // If this is an internal node (has children), add current depth multiplied by edge
-            // count
+            // If this is an internal node (has children), add current depth
+            // multiplied by count of leaves from edges that differ
 
             // Use IterativeLeavesCount or dfsLeavesCount
             accumulatedScore += currentDepth * iterativeLeavesCount(currentNode, currentDepth);
@@ -735,11 +729,8 @@ class SuffixTreeWithScoreChecking : public SuffixTree {
 class Solution {
   public:
     long long sumScores(std::string s) {
-
         SuffixTreeWithScoreChecking tree(s);
-
         long long totalScore = tree.findScore();
-
         return totalScore;
     }
 };
