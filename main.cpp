@@ -625,6 +625,7 @@ class SuffixTreeWithLcs : public SuffixTree {
 };
 
 // For leetcode task
+// https://leetcode.com/problems/sum-of-scores-of-built-strings/
 class SuffixTreeWithScoreChecking : public SuffixTree {
   public:
     SuffixTreeWithScoreChecking(std::string text) : SuffixTree(text) {}
