@@ -24,10 +24,6 @@ struct SuffixTreeEdge;
  * - An identifier for leaf nodes (represents the starting index of the suffix)
  */
 struct SuffixTreeNode {
-    // Static counter for assigning unique IDs to leaf nodes
-    // Leaf node IDs represent the starting index of the suffix they contain
-    static size_t currentMaxSuffixIndex;
-
     // Map of starting characters to outgoing edges
     // Each edge represents a substring starting with the key character
     std::map<char, SuffixTreeEdge *> next;
@@ -36,10 +32,6 @@ struct SuffixTreeNode {
     // character Used for efficient suffix transitions during tree construction
     // (Rule 3)
     SuffixTreeNode *suffixLink = nullptr;
-
-    // For leaf nodes: represents the starting index of the suffix in the input
-    // string For internal nodes: typically 0 or unused
-    size_t id = 0;
 
     // Default constructor - creates an empty node
     SuffixTreeNode();
@@ -70,7 +62,6 @@ struct SuffixTreeNode {
     // Debug output operator for visualizing the node structure
     friend std::ostream &operator<<(std::ostream &os, const SuffixTreeNode &node);
 };
-size_t SuffixTreeNode::currentMaxSuffixIndex = 0;
 
 /**
  * Represents an edge in the suffix tree.
@@ -129,7 +120,6 @@ SuffixTreeNode::SuffixTreeNode(char value, size_t start, size_t *end) {
 
 void SuffixTreeNode::addEdge(char value, size_t start, size_t *end) {
     this->next[value] = new SuffixTreeEdge(start, end);
-    this->next[value]->node->id = SuffixTreeNode::currentMaxSuffixIndex++;
 }
 
 void SuffixTreeNode::addEdge(SuffixTreeNode *node, char value, size_t start, size_t *end) {
@@ -171,7 +161,6 @@ SuffixTreeNode *SuffixTreeEdge::split(size_t *currentEnd, size_t length, char ne
     assert(!(length == 0 || length >= this->getLength()));
 
     SuffixTreeNode *internalNode = new SuffixTreeNode(newChar, *currentEnd - 1, currentEnd);
-    internalNode->next[newChar]->node->id = SuffixTreeNode::currentMaxSuffixIndex++;
     internalNode->addEdge(this->node, differentChar, this->start + length, this->end);
 
     this->node = internalNode;
@@ -734,26 +723,3 @@ class Solution {
         return totalScore;
     }
 };
-
-// int main() {
-//     std::string s1, s2;
-//     std::cin >> s1 >> s2;
-//     auto tree = SuffixTreeWithLcs(s1, s2);
-//     auto [startIndexes, length] = tree.findAllLcs();
-
-//     if (length == 0) {
-//         return 0;
-//     }
-
-//     std::set<std::string> substrings;
-
-//     for (const size_t &start : startIndexes) {
-//         substrings.insert(s2.substr(start, length));
-//     }
-
-//     std::cout << length << '\n';
-//     for (const std::string &substring : substrings) {
-//         std::cout << substring << '\n';
-//     }
-//     return 0;
-// }
